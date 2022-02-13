@@ -6,8 +6,8 @@ import { DataGrid } from '@mui/x-data-grid';
 import SearchBar from "material-ui-search-bar";
 import * as React from 'react';
 
-
 let datas = require('../data/Data.json');
+
 const columns = [
     { field: 'id', headerName: '#', width: 70 },
     { field: 'name', headerName: 'name', width: 130 },
@@ -30,28 +30,18 @@ const columns = [
     { field: 'Mileage', headerName: 'Mileage', width: 160, },
 ];
 
-const rows =
-    // {
-    //     datas.map((data, index) => (
-    //         { id: { index + 1 }, name: { data.name }, code: { data.code }, availability: { data.availability ? 'true' : 'false' }, needing_repair: { data.needing_repair ? 'true' : 'false' }, durability: { data.durability }, mileage: { data.mileage } }
-    //     ))
-    // }
-    <tbody>
-        {datas.map((data, index) => (
-            <tr key={index}>
-                <td>{index + 1}</td>
-                <td >{data.name}</td>
-                <td>{data.code}</td>
-                <td>{data.availability ? 'true' : 'false'}</td>
-                <td>{data.needing_repair ? 'true' : 'false'}</td>
-                <td>{data.durability}</td>
-                <td>{data.mileage}</td>
-            </tr>
-        ))}
-    </tbody>
-    ;
-
-
+const rows = datas.map((data, index) => {
+    return {
+        id: index + 1,
+        name: data.name,
+        code: data.code,
+        availability: data.availability ? 'available' : 'not available',
+        needing_repair: data.needing_repair ? 'need to repair' : 'no need to repair',
+        Durability: data.durability,
+        Mileage: data.mileage,
+    };
+}
+);
 
 // modal styling
 const style = {
@@ -234,7 +224,7 @@ export default function DataTable() {
     };
 
     return (
-        <div style={{ height: 400, width: '100%' }}>
+        <div style={{ height: 550, width: '100%', marginTop: '20px' }}>
             <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                 <Autocomplete
                     style={{ width: "200px", marginBottom: "10px" }}
@@ -253,13 +243,13 @@ export default function DataTable() {
             <DataGrid
                 rows={rows}
                 columns={columns}
-                pageSize={5}
+                pageSize={15}
                 rowsPerPageOptions={[15]}
                 pagination
                 disableSelectionOnClick
             />
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 5 }}>
-                <div style={{}}>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 25 }}>
+                <div style={{ marginTop: '20px' }}>
                     <Button variant="contained" onClick={handleOpenBook}>Book</Button>
                     <Modal
                         open={open}
@@ -276,7 +266,7 @@ export default function DataTable() {
                         </Box>
                     </Modal>
                 </div>
-                <div style={{}}>
+                <div style={{ marginTop: '20px' }}>
                     <Button variant="contained" onClick={handleOpenReturn}>Return</Button>
                     <Modal
                         open={open}
