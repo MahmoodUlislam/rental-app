@@ -10,24 +10,24 @@ let datas = require('../data/Data.json');
 
 const columns = [
     { field: 'id', headerName: '#', width: 70 },
-    { field: 'name', headerName: 'name', width: 130 },
-    { field: 'code', headerName: 'code', width: 130 },
+    { field: 'name', headerName: 'name', width: 300 },
+    { field: 'code', headerName: 'code', width: 100 },
     {
         field: 'availability',
         headerName: 'availability',
         sortable: false,
         description: 'This column has value of boolean and is not sortable.',
-        width: 160,
+        width: 200,
     },
     {
         field: 'needing_repair',
         headerName: 'need to repair',
         description: 'This column has value of boolean and is not sortable.',
         sortable: false,
-        width: 160,
+        width: 200,
     },
-    { field: 'Durability', headerName: 'Durability', width: 160, },
-    { field: 'Mileage', headerName: 'Mileage', width: 160, },
+    { field: 'Durability', headerName: 'Durability', width: 200, },
+    { field: 'Mileage', headerName: 'Mileage', width: 200, },
 ];
 
 const rows = datas.map((data, index) => {
