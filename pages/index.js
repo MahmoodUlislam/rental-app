@@ -12,8 +12,7 @@ const searchHandler = function () {
 }
 
 export default function Home() {
-  // const nameSearch = useRef(null);
-  // console.log(datas);
+
   return (
     <div className={styles.container}>
       <Head>

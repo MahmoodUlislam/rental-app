@@ -1,11 +1,21 @@
+import AdapterDateFns from "@mui/lab/AdapterDateFns";
+import DatePicker from "@mui/lab/DatePicker";
+import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import Autocomplete from '@mui/material/Autocomplete';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import Divider from "@mui/material/Divider";
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
 import Modal from '@mui/material/Modal';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import Select from '@mui/material/Select';
+import { useTheme } from '@mui/material/styles';
+import TextField from "@mui/material/TextField";
 import { DataGrid } from '@mui/x-data-grid';
 import SearchBar from "material-ui-search-bar";
 import * as React from 'react';
-
 let datas = require('../data/Data.json');
 
 const columns = [
@@ -59,64 +69,65 @@ const style = {
 };
 
 // modal displaying for book
-
-function ChildModal() {
-    const [open, setOpen] = React.useState(false);
+function ChildModalBook() {
+    const [openBook, setOpenBook] = React.useState(false);
     const handleOpenBook = () => {
-        setOpen(true);
+        setOpenBook(true);
     };
     const handleCloseBook = () => {
-        setOpen(false);
+        setOpenBook(false);
     };
+
 
     return (
         <React.Fragment>
-            <Button onClick={handleOpenBook}>Open Child Modal</Button>
+            <Button onClick={handleCloseBook}>No</Button>
+            <Button onClick={handleOpenBook}>Yes</Button>
             <Modal
                 hideBackdrop
-                open={open}
+                open={openBook}
                 onClose={handleCloseBook}
                 aria-labelledby="child-modal-title"
                 aria-describedby="child-modal-description"
             >
-                <Box sx={{ ...style, width: 200 }}>
-                    <h2 id="child-modal-title">Text in a child modal</h2>
+                <Box sx={{ ...style, width: 500 }}>
                     <p id="child-modal-description">
-                        Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+                        Total price is:  ?
                     </p>
-                    <Button onClick={handleCloseBook}>Close Child Modal</Button>
+                    <Button onClick={handleCloseBook}>Confirm</Button>
                 </Box>
             </Modal>
-        </React.Fragment>
+        </React.Fragment >
     );
 }
+
 // modal displaying for return
 
 function ChildModalRetrun() {
-    const [open, setOpen] = React.useState(false);
-    const handleOpenBook = () => {
-        setOpen(true);
+    const [openReturn, setOpenReturn] = React.useState(false);
+    const handleOpenReturn = () => {
+        setOpenReturn(true);
     };
     const handleCloseReturn = () => {
-        setOpen(false);
+        setOpenReturn(false);
     };
 
     return (
         <React.Fragment>
-            <Button onClick={handleOpenReturn}>Open Child Modal</Button>
+            <Button onClick={handleCloseReturn}>No</Button>
+            <Button onClick={handleOpenReturn}>Yes</Button>
             <Modal
                 hideBackdrop
-                open={open}
+                open={openReturn}
                 onClose={handleCloseReturn}
                 aria-labelledby="child-modal-title"
                 aria-describedby="child-modal-description"
             >
                 <Box sx={{ ...style, width: 200 }}>
-                    <h2 id="child-modal-title">Text in a child modal</h2>
                     <p id="child-modal-description">
-                        Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+                        Do you want to close?
                     </p>
-                    <Button onClick={handleCloseReturn}>Close Child Modal</Button>
+                    <Button onClick={handleCloseReturn}>Confirm</Button>
                 </Box>
             </Modal>
         </React.Fragment>
@@ -126,8 +137,11 @@ function ChildModalRetrun() {
 export default function DataTable() {
     // for search by name
     const [searched, setSearched] = React.useState([]);
+    // for setting all the datas of the searched in an array to be used in the next render component.
+    const [profile, setProfile] = React.useState([]);
+    // for setting the value of the search bar
     const requestSearch = (searchedVal) => {
-        const ProfileSearchArray = datas.filter((datas) => {
+        const dataArray = datas.filter((data) => {
             return data.name.toLowerCase().includes(searchedVal.toLowerCase());
         });
         setProfile(dataArray);
@@ -141,13 +155,78 @@ export default function DataTable() {
     // for setting the search value of the user name, which is set from the data array.
     const rentProfile = datas;
 
-
     // for modal
-    const [open, setOpen] = React.useState(false);
-    const handleOpenBook = () => setOpen(true);
-    const handleCloseBook = () => setOpen(false);
-    const handleOpenReturn = () => setOpen(true);
-    const handleCloseReturn = () => setOpen(false);
+    const [openBook, setOpenBook] = React.useState(false);
+    const [openReturn, setOpenReturn] = React.useState(false);
+    const handleOpenBook = () => setOpenBook(true);
+    const handleCloseBook = () => setOpenBook(false);
+    const handleOpenReturn = () => setOpenReturn(true);
+    const handleCloseReturn = () => setOpenReturn(false);
+
+
+    // select option in modal 
+    const ITEM_HEIGHT = 48;
+    const ITEM_PADDING_TOP = 8;
+    const MenuProps = {
+        PaperProps: {
+            style: {
+                maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+                width: 250,
+            },
+        },
+    };
+
+    const list = datas.map((data, index) => {
+        return {
+            id: index + 1,
+            name: data.name,
+            code: data.code,
+            availability: data.availability ? 'available' : 'not available',
+            needing_repair: data.needing_repair ? 'need to repair' : 'no need to repair',
+            Durability: data.durability,
+            Mileage: data.mileage,
+        };
+    }
+    );
+
+    function getStyles(name, itemName, theme) {
+        return {
+            fontWeight:
+                itemName.indexOf(name) === -1
+                    ? theme.typography.fontWeightRegular
+                    : theme.typography.fontWeightMedium,
+        };
+    }
+    function getStylesMileage(name, mileage, theme) {
+        return {
+            fontWeight:
+                mileage.indexOf(name) === -1
+                    ? theme.typography.fontWeightRegular
+                    : theme.typography.fontWeightMedium,
+        };
+    }
+    const theme = useTheme();
+    const [itemName, setItemName] = React.useState([]);
+    const [mileage, setMileage] = React.useState([]);
+
+    const handleChangeName = (event) => {
+        const {
+            target: { value },
+        } = event;
+        setItemName(
+            // On autofill we get a stringified value.
+            typeof value === 'string' ? value.split(',') : value,
+        );
+    };
+    const handleChangeMileage = (event) => {
+        const {
+            target: { value },
+        } = event;
+        setMileage(
+            // On autofill we get a stringified value.
+            typeof value === 'string' ? value.split(',') : value,
+        );
+    };
 
     // for setting the default date of the date picker field.
     const [fromDate, setfromDate] = React.useState(
@@ -252,38 +331,122 @@ export default function DataTable() {
                 <div style={{ marginTop: '20px' }}>
                     <Button variant="contained" onClick={handleOpenBook}>Book</Button>
                     <Modal
-                        open={open}
+                        open={openBook}
                         onClose={handleCloseBook}
                         aria-labelledby="parent-modal-title"
                         aria-describedby="parent-modal-description"
                     >
                         <Box sx={{ ...style, width: 400 }}>
-                            <h2 id="parent-modal-title">Text in a modal</h2>
-                            <p id="parent-modal-description">
-                                Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                            </p>
-                            <ChildModal />
+                            <h1 id="parent-modal-title">Book a product</h1>
+                            <div >
+
+                                <Divider sx={{ width: "400px" }} />
+                                <div className="dateSelection">
+                                    <div style={{ padding: '15px' }}  >
+                                        <label htmlFor="startDate">
+                                            From
+                                        </label>
+                                        <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                            <DatePicker
+                                                name="from_date"
+                                                value={fromDate}
+                                                onChange={(newValue) => {
+                                                    setfromDate(newValue);
+                                                }}
+                                                renderInput={(params) => <TextField {...params} />}
+                                            />
+                                        </LocalizationProvider>
+                                    </div>
+                                    <div style={{ padding: '20px' }} >
+                                        <label
+                                            style={{ marginRight: "15px" }}
+                                            htmlFor="endDate"
+                                        >
+                                            To
+                                        </label>
+                                        <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                            <DatePicker
+                                                name="to_date"
+                                                value={toDate}
+                                                onChange={(newValue) => {
+                                                    setToDate(newValue);
+                                                }}
+                                                renderInput={(params) => <TextField {...params} />}
+                                            />
+                                        </LocalizationProvider>
+                                    </div>
+                                </div>
+                            </div>
+                            <ChildModalBook />
                         </Box>
                     </Modal>
                 </div>
                 <div style={{ marginTop: '20px' }}>
                     <Button variant="contained" onClick={handleOpenReturn}>Return</Button>
                     <Modal
-                        open={open}
+                        open={openReturn}
                         onClose={handleCloseReturn}
                         aria-labelledby="parent-modal-title"
                         aria-describedby="parent-modal-description"
                     >
                         <Box sx={{ ...style, width: 400 }}>
-                            <h2 id="parent-modal-title">Text in a modal</h2>
-                            <p id="parent-modal-description">
-                                Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                            </p>
-                            <ChildModal />
+                            <h1 id="parent-modal-description">
+                                Return a product
+                            </h1>
+                            <div>
+                                <FormControl sx={{ m: 1, width: 300 }}>
+                                    <InputLabel id="demo-multiple-name-label">Name</InputLabel>
+                                    <Select
+                                        labelId="demo-multiple-name-label"
+                                        id="demo-multiple-name"
+                                        multiple
+                                        value={itemName}
+                                        onChange={handleChangeName}
+                                        input={<OutlinedInput label="Name" />}
+                                        MenuProps={MenuProps}
+                                    >
+                                        {datas.map((data) => (
+                                            <MenuItem
+                                                key={data.code}
+                                                value={data.name}
+                                                style={getStyles(data.name, itemName, theme)}
+                                            >
+                                                {data.name}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            </div>
+                            <div>
+                                <FormControl sx={{ m: 1, width: 300 }}>
+                                    <InputLabel id="demo-multiple-name-label">Mileage</InputLabel>
+                                    <Select
+                                        labelId="demo-multiple-name-label"
+                                        id="demo-multiple-name"
+                                        multiple
+                                        value={mileage}
+                                        onChange={handleChangeMileage}
+                                        input={<OutlinedInput label="Mileage" />}
+                                        MenuProps={MenuProps}
+                                    >
+                                        {datas.map((data) => (
+                                            <MenuItem
+                                                key={data.code}
+                                                value={data.mileage}
+                                                style={getStylesMileage(data.mileage, mileage, theme)}
+                                            >
+                                                {data.mileage}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            </div>
+
+                            <ChildModalRetrun />
                         </Box>
                     </Modal>
                 </div>
             </div>
-        </div>
+        </div >
     );
 }
