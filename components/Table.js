@@ -1,7 +1,6 @@
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import DatePicker from "@mui/lab/DatePicker";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
-import Autocomplete from '@mui/material/Autocomplete';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Divider from "@mui/material/Divider";
@@ -14,7 +13,6 @@ import Select from '@mui/material/Select';
 import { useTheme } from '@mui/material/styles';
 import TextField from "@mui/material/TextField";
 import { DataGrid } from '@mui/x-data-grid';
-import SearchBar from "material-ui-search-bar";
 import * as React from 'react';
 let datas = require('../data/Data.json');
 
@@ -40,18 +38,7 @@ const columns = [
     { field: 'Mileage', headerName: 'Mileage', width: 200, },
 ];
 
-const rows = datas.map((data, index) => {
-    return {
-        id: index + 1,
-        name: data.name,
-        code: data.code,
-        availability: data.availability ? 'available' : 'not available',
-        needing_repair: data.needing_repair ? 'need to repair' : 'no need to repair',
-        Durability: data.durability,
-        Mileage: data.mileage,
-    };
-}
-);
+
 
 // modal styling
 const style = {
@@ -68,100 +55,122 @@ const style = {
     pb: 3,
 };
 
-// modal displaying for book
-function ChildModalBook() {
-    const [openBook, setOpenBook] = React.useState(false);
-    const handleOpenBook = () => {
-        setOpenBook(true);
-    };
-    const handleCloseBook = () => {
-        setOpenBook(false);
-    };
-
-
-    return (
-        <React.Fragment>
-            <Button onClick={handleCloseBook}>No</Button>
-            <Button onClick={handleOpenBook}>Yes</Button>
-            <Modal
-                hideBackdrop
-                open={openBook}
-                onClose={handleCloseBook}
-                aria-labelledby="child-modal-title"
-                aria-describedby="child-modal-description"
-            >
-                <Box sx={{ ...style, width: 500 }}>
-                    <p id="child-modal-description">
-                        Total price is:  ?
-                    </p>
-                    <Button onClick={handleCloseBook}>Confirm</Button>
-                </Box>
-            </Modal>
-        </React.Fragment >
-    );
-}
-
-// modal displaying for return
-
-function ChildModalRetrun() {
-    const [openReturn, setOpenReturn] = React.useState(false);
-    const handleOpenReturn = () => {
-        setOpenReturn(true);
-    };
-    const handleCloseReturn = () => {
-        setOpenReturn(false);
-    };
-
-    return (
-        <React.Fragment>
-            <Button onClick={handleCloseReturn}>No</Button>
-            <Button onClick={handleOpenReturn}>Yes</Button>
-            <Modal
-                hideBackdrop
-                open={openReturn}
-                onClose={handleCloseReturn}
-                aria-labelledby="child-modal-title"
-                aria-describedby="child-modal-description"
-            >
-                <Box sx={{ ...style, width: 200 }}>
-                    <p id="child-modal-description">
-                        Do you want to close?
-                    </p>
-                    <Button onClick={handleCloseReturn}>Confirm</Button>
-                </Box>
-            </Modal>
-        </React.Fragment>
-    );
-}
-
 export default function DataTable() {
     // for search by name
-    const [searched, setSearched] = React.useState([]);
+
+    const [searched, setSearched] = React.useState("");
     // for setting all the datas of the searched in an array to be used in the next render component.
     const [profile, setProfile] = React.useState([]);
     // for setting the value of the search bar
-    const requestSearch = (searchedVal) => {
+    const requestSearch = (searchVal) => {
         const dataArray = datas.filter((data) => {
-            return data.name.toLowerCase().includes(searchedVal.toLowerCase());
+            return [data.name.toLowerCase().includes(searchVal.toLowerCase())];
         });
-        setProfile(dataArray);
+        setSearched(dataArray);
     };
     const cancelSearch = () => {
         setSearched([]);
         requestSearch(searched);
     };
 
+    const rows =
+        datas.filter((data) => {
 
+            if (searched === "") {
+                return datas;
+            }
+            else if (data.name.toLowerCase().includes(searched)) {
+                return searched;
+            }
+
+        }).map((data, index) => {
+            return {
+                id: index + 1,
+                name: data.name,
+                code: data.code,
+                availability: data.availability ? 'available' : 'not available',
+                needing_repair: data.needing_repair ? 'need to repair' : 'no need to repair',
+                Durability: data.durability,
+                Mileage: data.mileage,
+            };
+        });
     // for setting the search value of the user name, which is set from the data array.
-    const rentProfile = datas;
+    // const rentProfile = datas;
 
     // for modal
+    const [open, setOpen] = React.useState(false);
     const [openBook, setOpenBook] = React.useState(false);
     const [openReturn, setOpenReturn] = React.useState(false);
+    const handleOpenModal = () => setOpen(true);
+    const handleCloseModal = () => setOpen(false);
     const handleOpenBook = () => setOpenBook(true);
     const handleCloseBook = () => setOpenBook(false);
     const handleOpenReturn = () => setOpenReturn(true);
     const handleCloseReturn = () => setOpenReturn(false);
+
+
+    // Child modal displaying for book
+    function ChildModalBook(props) {
+        const [open, setOpen] = React.useState(false);
+        const [openBook, setOpenBook] = React.useState(false);
+        const handleOpenModal = () => setOpen(true);
+        const handleCloseModal = () => setOpen(false);
+        const handleOpenBook = () => setOpenBook(true);
+        const handleCloseBook = () => setOpenBook(false);
+
+
+
+        return (
+            <React.Fragment>
+                <Button onClick={handleCloseModal}>No</Button>
+                <Button onClick={handleOpenBook}>Yes</Button>
+                <Modal
+                    open={openBook}
+                    onClose={handleCloseBook}
+                    aria-labelledby="child-modal-title"
+                    aria-describedby="child-modal-description"
+                >
+                    <Box sx={{ ...style, width: 500 }}>
+                        <p id="child-modal-description">
+                            Total price is:  ?
+                        </p>
+                        <Button onClick={handleCloseBook}>Confirm</Button>
+                    </Box>
+                </Modal>
+            </React.Fragment >
+        );
+    }
+
+    // Child modal displaying for return
+
+    function ChildModalRetrun() {
+        const [openReturn, setOpenReturn] = React.useState(false);
+        const handleOpenReturn = () => setOpenReturn(true);
+        const handleCloseReturn = () => setOpenReturn(false);
+
+
+        return (
+            <React.Fragment>
+                <Button onClick={handleCloseModal}>No</Button>
+                <Button onClick={handleOpenReturn}>Yes</Button>
+                <Modal
+
+                    open={openReturn}
+                    onClose={handleCloseReturn}
+                    aria-labelledby="child-modal-title"
+                    aria-describedby="child-modal-description"
+                >
+                    <Box sx={{ ...style, width: 200 }}>
+                        <p id="child-modal-description">
+                            Do you want to return?
+                        </p>
+                        <Button onClick={handleCloseReturn}>Confirm</Button>
+                    </Box>
+                </Modal>
+
+            </React.Fragment>
+        );
+    }
 
 
     // select option in modal 
@@ -237,87 +246,79 @@ export default function DataTable() {
     );
 
     // for formatting the date to be used in the next render component, to be calculated for selected user status.
-    function formatDate(date) {
-        var d = new Date(date),
-            month = "" + (d.getMonth() + 1),
-            day = "" + d.getDate(),
-            year = d.getFullYear();
+    // function formatDate(date) {
+    //     var d = new Date(date),
+    //         month = "" + (d.getMonth() + 1),
+    //         day = "" + d.getDate(),
+    //         year = d.getFullYear();
 
-        if (month.length < 2) month = "0" + month;
-        if (day.length < 2) day = "0" + day;
+    //     if (month.length < 2) month = "0" + month;
+    //     if (day.length < 2) day = "0" + day;
 
-        return [year, month, day].join("-");
-    }
+    //     return [year, month, day].join("-");
+    // }
 
     // for generating the result of customer based on user status and date.
-    const formSubmitHandler = (e) => {
-        e.preventDefault();
-        let From = formatDate(fromDate);
-        let To = formatDate(toDate);
-        const dataArray = [];
+    // const formSubmitHandler = (e) => {
+    //     e.preventDefault();
+    //     let From = formatDate(fromDate);
+    //     let To = formatDate(toDate);
+    //     const dataArray = [];
 
-        //  calculating the logic for the selected user status based on date & meals ordered.
-        files.forEach((element) => {
-            let count = 0;
+    //     //  calculating the logic for the selected user status based on date & meals ordered.
+    //     files.forEach((element) => {
+    //         let count = 0;
 
-            Object.keys(element.calendar.dateToDayId).forEach(function (dayId) {
-                if (
-                    new Date(From) <= new Date(dayId) &&
-                    new Date(To) >= new Date(dayId)
-                ) {
-                    Object.keys(element.calendar.mealIdToDayId).forEach(function (
-                        mealId
-                    ) {
-                        if (
-                            element.calendar.dateToDayId[dayId] ===
-                            element.calendar.mealIdToDayId[mealId]
-                        ) {
-                            count++;
-                        }
-                    });
-                }
-            });
+    //         Object.keys(element.calendar.dateToDayId).forEach(function (dayId) {
+    //             if (
+    //                 new Date(From) <= new Date(dayId) &&
+    //                 new Date(To) >= new Date(dayId)
+    //             ) {
+    //                 Object.keys(element.calendar.mealIdToDayId).forEach(function (
+    //                     mealId
+    //                 ) {
+    //                     if (
+    //                         element.calendar.dateToDayId[dayId] ===
+    //                         element.calendar.mealIdToDayId[mealId]
+    //                     ) {
+    //                         count++;
+    //                     }
+    //                 });
+    //             }
+    //         });
 
-            // condition applied for calculating the user status based on the meals ordered.
-            if (userStatus === "active") {
+    //         // condition applied for calculating the user status based on the meals ordered.
+    //         if (userStatus === "active") {
 
-                if (count >= 5 && count <= 10) {
-                    dataArray.push(element.profile);
-                }
+    //             if (count >= 5 && count <= 10) {
+    //                 dataArray.push(element.profile);
+    //             }
 
-            } else if (userStatus === "superactive") {
+    //         } else if (userStatus === "superactive") {
 
-                if (count > 10) {
-                    dataArray.push(element.profile);
-                }
+    //             if (count > 10) {
+    //                 dataArray.push(element.profile);
+    //             }
 
-            } else if (userStatus === "bored") {
+    //         } else if (userStatus === "bored") {
 
-                if (count === 0) {
-                    dataArray.push(element.profile);
-                }
+    //             if (count === 0) {
+    //                 dataArray.push(element.profile);
+    //             }
 
-            }
-            setProfile(dataArray);
-        });
-    };
+    //         }
+    //         setProfile(dataArray);
+    //     });
+    // };
 
     return (
         <div style={{ height: 550, width: '100%', marginTop: '20px' }}>
             <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                <Autocomplete
-                    style={{ width: "200px", marginBottom: "10px" }}
-                    id="free-solo-demo"
-                    freeSolo
-                    options={rentProfile.map((option) => option.name)}
-                    renderInput={(props) =>
-                        <SearchBar {...props}
-                            placeholder="Search by name"
-                            value={searched}
-                            onChange={(searchVal) => requestSearch(searchVal)}
-                            onCancelSearch={() => cancelSearch()}
-                        />}
-                />
+                <input style={{ width: '300px', margin: '10px', padding: '10px', border: '1px solid #ccc', borderRadius: '5px' }}
+                    type="text"
+                    placeholder="Search by name"
+                    value={searched}
+                    onChange={(e) => setSearched(e.target.value)} />
             </div>
             <DataGrid
                 rows={rows}
@@ -338,18 +339,42 @@ export default function DataTable() {
                     >
                         <Box sx={{ ...style, width: 400 }}>
                             <h1 id="parent-modal-title">Book a product</h1>
+                            <div>
+                                <FormControl sx={{ mb: 1, width: "100%" }}>
+                                    <InputLabel id="demo-multiple-name-label">Name</InputLabel>
+                                    <Select
+                                        labelId="demo-multiple-name-label"
+                                        id="demo-multiple-name"
+                                        multiple
+                                        value={itemName}
+                                        onChange={handleChangeName}
+                                        input={<OutlinedInput label="Name" />}
+                                        MenuProps={MenuProps}
+                                    >
+                                        {datas.map((data) => (
+                                            <MenuItem
+                                                key={data.code}
+                                                value={data.name}
+                                                style={getStyles(data.name, itemName, theme)}
+                                            >
+                                                {data.name}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            </div>
                             <div >
-
-                                <Divider sx={{ width: "400px" }} />
+                                <Divider sx={{ width: "100%" }} />
                                 <div className="dateSelection">
                                     <div style={{ padding: '15px' }}  >
-                                        <label htmlFor="startDate">
+                                        <label style={{ marginRight: "5px" }} htmlFor="startDate">
                                             From
                                         </label>
                                         <LocalizationProvider dateAdapter={AdapterDateFns}>
                                             <DatePicker
                                                 name="from_date"
                                                 value={fromDate}
+
                                                 onChange={(newValue) => {
                                                     setfromDate(newValue);
                                                 }}
@@ -393,6 +418,7 @@ export default function DataTable() {
                             <h1 id="parent-modal-description">
                                 Return a product
                             </h1>
+                            <Divider sx={{ width: "100%" }} />
                             <div>
                                 <FormControl sx={{ m: 1, width: 300 }}>
                                     <InputLabel id="demo-multiple-name-label">Name</InputLabel>

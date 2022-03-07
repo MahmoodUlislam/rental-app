@@ -3,14 +3,6 @@ import Image from 'next/image';
 import DataTable from '../components/Table';
 import styles from '../styles/Home.module.css';
 
-let datas = require('../data/Data.json');
-const searchHandler = function () {
-  let search = document.getElementById('search').value;
-  let result = datas.filter(data => data.name.toLowerCase().includes(search.toLowerCase()));
-  console.log(result);
-  return result;
-}
-
 export default function Home() {
 
   return (
@@ -33,7 +25,7 @@ export default function Home() {
         >
           Created by{' '}
           <span className={styles.logo}>
-            <Image src="/Mi-logo.svg" alt="Vercel Logo" width={72} height={16} />
+            <Image src="/Mi-logo.svg" alt="Mahmood-Logo" width={72} height={16} />
           </span>
         </a>
       </footer>
