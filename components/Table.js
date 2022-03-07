@@ -57,22 +57,12 @@ const style = {
 
 export default function DataTable() {
     // for search by name
-
     const [searched, setSearched] = React.useState("");
-    // for setting all the datas of the searched in an array to be used in the next render component.
-    const [profile, setProfile] = React.useState([]);
-    // for setting the value of the search bar
-    const requestSearch = (searchVal) => {
-        const dataArray = datas.filter((data) => {
-            return [data.name.toLowerCase().includes(searchVal.toLowerCase())];
-        });
-        setSearched(dataArray);
-    };
-    const cancelSearch = () => {
-        setSearched([]);
-        requestSearch(searched);
-    };
 
+    // for setting all the datas of the filter in an array to be used in the next render component.
+    // const [filteredData, setFilteredData] = React.useState([]);
+
+    // for setting the datas of table after passing search filter of the search bar
     const rows =
         datas.filter((data) => {
 
@@ -94,14 +84,13 @@ export default function DataTable() {
                 Mileage: data.mileage,
             };
         });
-    // for setting the search value of the user name, which is set from the data array.
-    // const rentProfile = datas;
+    // for setting the filter value of the item name, which is set from the data array.
+    const rentProfile = datas;
 
     // for modal
     const [open, setOpen] = React.useState(false);
     const [openBook, setOpenBook] = React.useState(false);
     const [openReturn, setOpenReturn] = React.useState(false);
-    const handleOpenModal = () => setOpen(true);
     const handleCloseModal = () => setOpen(false);
     const handleOpenBook = () => setOpenBook(true);
     const handleCloseBook = () => setOpenBook(false);
@@ -111,10 +100,9 @@ export default function DataTable() {
 
     // Child modal displaying for book
     function ChildModalBook(props) {
-        const [open, setOpen] = React.useState(false);
+
         const [openBook, setOpenBook] = React.useState(false);
-        const handleOpenModal = () => setOpen(true);
-        const handleCloseModal = () => setOpen(false);
+
         const handleOpenBook = () => setOpenBook(true);
         const handleCloseBook = () => setOpenBook(false);
 
@@ -122,7 +110,7 @@ export default function DataTable() {
 
         return (
             <React.Fragment>
-                <Button onClick={handleCloseModal}>No</Button>
+                <Button onClick={props.handleCloseBook}>No</Button>
                 <Button onClick={handleOpenBook}>Yes</Button>
                 <Modal
                     open={openBook}
@@ -143,15 +131,17 @@ export default function DataTable() {
 
     // Child modal displaying for return
 
-    function ChildModalRetrun() {
+    function ChildModalRetrun(props) {
+
         const [openReturn, setOpenReturn] = React.useState(false);
+
         const handleOpenReturn = () => setOpenReturn(true);
         const handleCloseReturn = () => setOpenReturn(false);
 
 
         return (
             <React.Fragment>
-                <Button onClick={handleCloseModal}>No</Button>
+                <Button onClick={props.handleCloseReturn}>No</Button>
                 <Button onClick={handleOpenReturn}>Yes</Button>
                 <Modal
 
@@ -185,18 +175,6 @@ export default function DataTable() {
         },
     };
 
-    const list = datas.map((data, index) => {
-        return {
-            id: index + 1,
-            name: data.name,
-            code: data.code,
-            availability: data.availability ? 'available' : 'not available',
-            needing_repair: data.needing_repair ? 'need to repair' : 'no need to repair',
-            Durability: data.durability,
-            Mileage: data.mileage,
-        };
-    }
-    );
 
     function getStyles(name, itemName, theme) {
         return {
@@ -245,27 +223,22 @@ export default function DataTable() {
         new Date(new Date())
     );
 
-    // for formatting the date to be used in the next render component, to be calculated for selected user status.
-    // function formatDate(date) {
-    //     var d = new Date(date),
-    //         month = "" + (d.getMonth() + 1),
-    //         day = "" + d.getDate(),
-    //         year = d.getFullYear();
+    // for formatting the date to be used in the next render component, to be calculated for pricing.
+    function formatDate(date) {
+        var d = new Date(date),
+            month = "" + d.getMonth(),
+            day = "" + d.getDate(),
+            year = d.getFullYear();
+    }
 
-    //     if (month.length < 2) month = "0" + month;
-    //     if (day.length < 2) day = "0" + day;
-
-    //     return [year, month, day].join("-");
-    // }
-
-    // for generating the result of customer based on user status and date.
+    // for generating the result based on item name, date and mileage.
     // const formSubmitHandler = (e) => {
     //     e.preventDefault();
     //     let From = formatDate(fromDate);
     //     let To = formatDate(toDate);
     //     const dataArray = [];
 
-    //     //  calculating the logic for the selected user status based on date & meals ordered.
+    //     //  calculating the logic for the selected item based on date & name.
     //     files.forEach((element) => {
     //         let count = 0;
 
@@ -287,26 +260,7 @@ export default function DataTable() {
     //             }
     //         });
 
-    //         // condition applied for calculating the user status based on the meals ordered.
-    //         if (userStatus === "active") {
-
-    //             if (count >= 5 && count <= 10) {
-    //                 dataArray.push(element.profile);
-    //             }
-
-    //         } else if (userStatus === "superactive") {
-
-    //             if (count > 10) {
-    //                 dataArray.push(element.profile);
-    //             }
-
-    //         } else if (userStatus === "bored") {
-
-    //             if (count === 0) {
-    //                 dataArray.push(element.profile);
-    //             }
-
-    //         }
+    //     
     //         setProfile(dataArray);
     //     });
     // };
@@ -328,7 +282,9 @@ export default function DataTable() {
                 pagination
                 disableSelectionOnClick
             />
+
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 25 }}>
+                {/* for book button & it's modal */}
                 <div style={{ marginTop: '20px' }}>
                     <Button variant="contained" onClick={handleOpenBook}>Book</Button>
                     <Modal
@@ -402,10 +358,12 @@ export default function DataTable() {
                                     </div>
                                 </div>
                             </div>
-                            <ChildModalBook />
+                            <ChildModalBook handleCloseBook={(e) => handleCloseBook(e.target.value)} />
                         </Box>
                     </Modal>
                 </div>
+
+                {/* for Return button & it's modal */}
                 <div style={{ marginTop: '20px' }}>
                     <Button variant="contained" onClick={handleOpenReturn}>Return</Button>
                     <Modal
@@ -468,7 +426,7 @@ export default function DataTable() {
                                 </FormControl>
                             </div>
 
-                            <ChildModalRetrun />
+                            <ChildModalRetrun handleCloseReturn={(e) => handleCloseReturn(e.target.value)} />
                         </Box>
                     </Modal>
                 </div>
