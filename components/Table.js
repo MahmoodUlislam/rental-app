@@ -141,8 +141,10 @@ export default function DataTable() {
 
         return (
             <React.Fragment>
-                <Button onClick={props.handleCloseReturn}>No</Button>
-                <Button onClick={handleOpenReturn}>Yes</Button>
+                <div style={{ textAlign: 'right' }}>
+                    <Button onClick={props.handleCloseReturn}>No</Button>
+                    <Button onClick={handleOpenReturn}>Yes</Button>
+                </div>
                 <Modal
 
                     open={openReturn}
@@ -358,7 +360,10 @@ export default function DataTable() {
                                     </div>
                                 </div>
                             </div>
-                            <ChildModalBook handleCloseBook={(e) => handleCloseBook(e.target.value)} />
+
+                            <div style={{ textAlign: 'right' }}>
+                                <ChildModalBook handleCloseBook={(e) => handleCloseBook(e.target.value)} />
+                            </div>
                         </Box>
                     </Modal>
                 </div>
