@@ -16,29 +16,6 @@ import { DataGrid } from '@mui/x-data-grid';
 import * as React from 'react';
 let datas = require('../data/Data.json');
 
-const columns = [
-    { field: 'id', headerName: '#', width: 70 },
-    { field: 'name', headerName: 'name', width: 300 },
-    { field: 'code', headerName: 'code', width: 100 },
-    {
-        field: 'availability',
-        headerName: 'availability',
-        sortable: false,
-        description: 'This column has value of boolean and is not sortable.',
-        width: 200,
-    },
-    {
-        field: 'needing_repair',
-        headerName: 'need to repair',
-        description: 'This column has value of boolean and is not sortable.',
-        sortable: false,
-        width: 200,
-    },
-    { field: 'Durability', headerName: 'Durability', width: 200, },
-    { field: 'Mileage', headerName: 'Mileage', width: 200, },
-];
-
-
 
 // modal styling
 const style = {
@@ -60,9 +37,38 @@ export default function DataTable() {
     const [searched, setSearched] = React.useState("");
 
     // for setting all the datas of the filter in an array to be used in the next render component.
-    // const [filteredData, setFilteredData] = React.useState([]);
+    const [filteredData, setFilteredData] = React.useState([]);
+
+    // for setting the filter value of the item name, which is set from the data array.
+    const rentProfile = datas;
 
     // for setting the datas of table after passing search filter of the search bar
+    const columns = [
+        { field: 'id', headerName: '#', width: 70 },
+        { field: 'name', headerName: 'Name', width: 250 },
+        { field: 'code', headerName: 'Code', width: 100 },
+        {
+            field: 'availability',
+            headerName: 'Availability',
+            sortable: false,
+            description: 'This column has value of boolean and is not sortable.',
+            width: 100,
+        },
+        {
+            field: 'needing_repair',
+            headerName: 'Need to repair',
+            description: 'This column has value of boolean and is not sortable.',
+            sortable: false,
+            width: 150,
+        },
+        { field: 'durability', headerName: 'Durability', width: 100, },
+        { field: 'mileage', headerName: 'Mileage', width: 100, },
+        { field: 'type', headerName: 'Type', width: 100, },
+        { field: 'maxDurability', headerName: 'Max_durability', width: 100, },
+        { field: 'price', headerName: 'Price', width: 100, },
+        { field: 'minimumRentPeriod', headerName: 'Minimum_rent_period', width: 200, }
+    ];
+
     const rows =
         datas.filter((data) => {
 
@@ -80,18 +86,19 @@ export default function DataTable() {
                 code: data.code,
                 availability: data.availability ? 'available' : 'not available',
                 needing_repair: data.needing_repair ? 'need to repair' : 'no need to repair',
-                Durability: data.durability,
-                Mileage: data.mileage,
+                durability: data.durability,
+                mileage: data.mileage,
+                type: data.type,
+                maxDurability: data.max_durability,
+                price: data.price,
+                minimumRentPeriod: data.minimum_rent_period
             };
         });
-    // for setting the filter value of the item name, which is set from the data array.
-    const rentProfile = datas;
 
     // for modal
-    const [open, setOpen] = React.useState(false);
     const [openBook, setOpenBook] = React.useState(false);
     const [openReturn, setOpenReturn] = React.useState(false);
-    const handleCloseModal = () => setOpen(false);
+
     const handleOpenBook = () => setOpenBook(true);
     const handleCloseBook = () => setOpenBook(false);
     const handleOpenReturn = () => setOpenReturn(true);
@@ -100,13 +107,9 @@ export default function DataTable() {
 
     // Child modal displaying for book
     function ChildModalBook(props) {
-
         const [openBook, setOpenBook] = React.useState(false);
-
         const handleOpenBook = () => setOpenBook(true);
         const handleCloseBook = () => setOpenBook(false);
-
-
 
         return (
             <React.Fragment>
@@ -118,11 +121,17 @@ export default function DataTable() {
                     aria-labelledby="child-modal-title"
                     aria-describedby="child-modal-description"
                 >
-                    <Box sx={{ ...style, width: 500 }}>
-                        <p id="child-modal-description">
-                            Total price is:  ?
+                    <Box sx={{ ...style, width: 400 }}>
+                        <p style={{ textAlign: 'center' }} id="child-modal-description">
+                            Your total price is $?
                         </p>
-                        <Button onClick={handleCloseBook}>Confirm</Button>
+                        <p style={{ textAlign: 'center' }} id="child-modal-description">
+                            Do you want to proceed?
+                        </p>
+
+                        <div style={{ textAlign: 'right' }}>
+                            <Button onClick={handleCloseBook}>Confirm</Button>
+                        </div>
                     </Box>
                 </Modal>
             </React.Fragment >
@@ -130,14 +139,10 @@ export default function DataTable() {
     }
 
     // Child modal displaying for return
-
     function ChildModalRetrun(props) {
-
         const [openReturn, setOpenReturn] = React.useState(false);
-
         const handleOpenReturn = () => setOpenReturn(true);
         const handleCloseReturn = () => setOpenReturn(false);
-
 
         return (
             <React.Fragment>
@@ -146,24 +151,28 @@ export default function DataTable() {
                     <Button onClick={handleOpenReturn}>Yes</Button>
                 </div>
                 <Modal
-
                     open={openReturn}
                     onClose={handleCloseReturn}
                     aria-labelledby="child-modal-title"
                     aria-describedby="child-modal-description"
                 >
-                    <Box sx={{ ...style, width: 200 }}>
-                        <p id="child-modal-description">
-                            Do you want to return?
+                    <Box sx={{ ...style, width: 400 }}>
+                        <p style={{ textAlign: 'center' }} id="child-modal-description">
+                            Your total price is $?
                         </p>
-                        <Button onClick={handleCloseReturn}>Confirm</Button>
+                        <p style={{ textAlign: 'center' }} id="child-modal-description">
+                            Do you want to proceed?
+                        </p>
+
+                        <div style={{ textAlign: 'right' }}>
+                            <Button onClick={handleCloseReturn}>Confirm</Button>
+                        </div>
                     </Box>
                 </Modal>
 
             </React.Fragment>
         );
     }
-
 
     // select option in modal 
     const ITEM_HEIGHT = 48;
@@ -219,17 +228,17 @@ export default function DataTable() {
 
     // for setting the default date of the date picker field.
     const [fromDate, setfromDate] = React.useState(
-        new Date(new Date("2016-07-04"))
+        new Date(new Date())
     );
     const [toDate, setToDate] = React.useState(
-        new Date(new Date())
+        new Date(new Date(Date.now() + (3600 * 1000 * 24)))
     );
 
     // for formatting the date to be used in the next render component, to be calculated for pricing.
     function formatDate(date) {
         var d = new Date(date),
-            month = "" + d.getMonth(),
             day = "" + d.getDate(),
+            month = "" + d.getMonth(),
             year = d.getFullYear();
     }
 
@@ -286,6 +295,7 @@ export default function DataTable() {
             />
 
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 25 }}>
+
                 {/* for book button & it's modal */}
                 <div style={{ marginTop: '20px' }}>
                     <Button variant="contained" onClick={handleOpenBook}>Book</Button>
