@@ -105,16 +105,23 @@ export default function DataTable() {
     const handleCloseReturn = () => setOpenReturn(false);
 
 
+
     // Child modal displaying for book
     function ChildModalBook(props) {
         const [openBook, setOpenBook] = React.useState(false);
         const handleOpenBook = () => setOpenBook(true);
         const handleCloseBook = () => setOpenBook(false);
-
+        // for generating the result for Book based on date and price/day.
+        const BookSubmitHandler = (e) => {
+            e.preventDefault();
+            const days = (toDate - fromDate) / (1000 * 3600 * 24);
+            const priceBook = days * props.price;
+            handleOpenBook();
+        };
         return (
             <React.Fragment>
                 <Button onClick={props.handleCloseBook}>No</Button>
-                <Button onClick={handleOpenBook}>Yes</Button>
+                <Button onClick={BookSubmitHandler}>Yes</Button>
                 <Modal
                     open={openBook}
                     onClose={handleCloseBook}
@@ -123,7 +130,7 @@ export default function DataTable() {
                 >
                     <Box sx={{ ...style, width: 400 }}>
                         <p style={{ textAlign: 'center' }} id="child-modal-description">
-                            Your total price is $?
+                            Your estimated price is ${props.priceBook}
                         </p>
                         <p style={{ textAlign: 'center' }} id="child-modal-description">
                             Do you want to proceed?
@@ -143,12 +150,18 @@ export default function DataTable() {
         const [openReturn, setOpenReturn] = React.useState(false);
         const handleOpenReturn = () => setOpenReturn(true);
         const handleCloseReturn = () => setOpenReturn(false);
-
+        // for generating the result return based on date and price/day.
+        const ReturnSubmitHandler = (e) => {
+            e.preventDefault();
+            const days = (toDate - fromDate) / (1000 * 3600 * 24);
+            const priceReturn = days * props.price;
+            handleOpenReturn();
+        };
         return (
             <React.Fragment>
                 <div style={{ textAlign: 'right' }}>
                     <Button onClick={props.handleCloseReturn}>No</Button>
-                    <Button onClick={handleOpenReturn}>Yes</Button>
+                    <Button onClick={ReturnSubmitHandler}>Yes</Button>
                 </div>
                 <Modal
                     open={openReturn}
@@ -158,7 +171,7 @@ export default function DataTable() {
                 >
                     <Box sx={{ ...style, width: 400 }}>
                         <p style={{ textAlign: 'center' }} id="child-modal-description">
-                            Your total price is $?
+                            Your total price is ${props.priceReturn}
                         </p>
                         <p style={{ textAlign: 'center' }} id="child-modal-description">
                             Do you want to proceed?
@@ -235,46 +248,15 @@ export default function DataTable() {
     );
 
     // for formatting the date to be used in the next render component, to be calculated for pricing.
-    function formatDate(date) {
-        var d = new Date(date),
-            day = "" + d.getDate(),
-            month = "" + d.getMonth(),
-            year = d.getFullYear();
-    }
+    // function formatDate(date) {
+    //     var d = new Date(date),
+    //         day = "" + d.getDate(),
+    //         month = "" + d.getMonth(),
+    //         year = d.getFullYear();
+    // }
 
-    // for generating the result based on item name, date and mileage.
-    // const formSubmitHandler = (e) => {
-    //     e.preventDefault();
-    //     let From = formatDate(fromDate);
-    //     let To = formatDate(toDate);
-    //     const dataArray = [];
 
-    //     //  calculating the logic for the selected item based on date & name.
-    //     files.forEach((element) => {
-    //         let count = 0;
 
-    //         Object.keys(element.calendar.dateToDayId).forEach(function (dayId) {
-    //             if (
-    //                 new Date(From) <= new Date(dayId) &&
-    //                 new Date(To) >= new Date(dayId)
-    //             ) {
-    //                 Object.keys(element.calendar.mealIdToDayId).forEach(function (
-    //                     mealId
-    //                 ) {
-    //                     if (
-    //                         element.calendar.dateToDayId[dayId] ===
-    //                         element.calendar.mealIdToDayId[mealId]
-    //                     ) {
-    //                         count++;
-    //                     }
-    //                 });
-    //             }
-    //         });
-
-    //     
-    //         setProfile(dataArray);
-    //     });
-    // };
 
     return (
         <div style={{ height: 550, width: '100%', marginTop: '20px' }}>
