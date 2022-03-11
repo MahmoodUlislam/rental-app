@@ -203,12 +203,9 @@ export default function DataTable() {
     };
 
 
-    function getStyles(name, itemName, theme) {
+    function getStyles(theme) {
         return {
-            fontWeight:
-                itemName.indexOf(name) === -1
-                    ? theme.typography.fontWeightRegular
-                    : theme.typography.fontWeightMedium,
+            fontWeight: theme.typography.fontWeightRegular
         };
     }
     function getStylesMileage(name, mileage, theme) {
@@ -227,7 +224,7 @@ export default function DataTable() {
         const {
             target: { value },
         } = event;
-        console.log(value);
+
         setItemName(
             // On autofill we get a stringified value.
             typeof value === 'string' ? value.split(',') : value,
@@ -295,21 +292,20 @@ export default function DataTable() {
                             <h1 id="parent-modal-title">Book a product</h1>
                             <div>
                                 <FormControl sx={{ mb: 1, width: "100%" }}>
-                                    <InputLabel id="demo-multiple-name-label">Name</InputLabel>
+
+                                    <InputLabel id="demo-simple-select-label">Name</InputLabel>
                                     <Select
-                                        labelId="demo-multiple-name-label"
-                                        id="demo-multiple-name"
-                                        multiple
+                                        labelId="demo-simple-select-label"
+                                        id="demo-simple-select"
                                         value={itemName}
+                                        label="item name"
                                         onChange={handleChangeName}
-                                        input={<OutlinedInput label="Name" />}
-                                        MenuProps={MenuProps}
                                     >
                                         {datas.map((data) => (
                                             <MenuItem
                                                 key={data.code}
                                                 value={data.price}
-                                                style={getStyles(data.name, itemName, theme)}
+
                                             >
                                                 {data.name}
                                             </MenuItem>
@@ -381,22 +377,19 @@ export default function DataTable() {
                             <Divider sx={{ width: "100%" }} />
                             <div>
                                 <FormControl sx={{ m: 1, width: 300 }}>
-                                    <InputLabel id="demo-multiple-name-label">Name</InputLabel>
-
+                                    <InputLabel id="demo-simple-select-label">Name</InputLabel>
                                     <Select
-                                        labelId="demo-multiple-name-label"
-                                        id="demo-multiple-name"
-                                        multiple
+                                        labelId="demo-simple-select-label"
+                                        id="demo-simple-select"
                                         value={itemName}
+                                        label="item name"
                                         onChange={handleChangeName}
-                                        input={<OutlinedInput label="Name" />}
-                                        MenuProps={MenuProps}
                                     >
                                         {datas.map((data) => (
                                             <MenuItem
                                                 key={data.code}
-                                                value={data.name}
-                                                style={getStyles(data.name, itemName, theme)}
+                                                value={data.price}
+
                                             >
                                                 {data.name}
                                             </MenuItem>
@@ -406,11 +399,10 @@ export default function DataTable() {
                             </div>
                             <div>
                                 <FormControl sx={{ m: 1, width: 300 }}>
-                                    <InputLabel id="demo-multiple-name-label">Mileage</InputLabel>
+                                    <InputLabel id="demo-simple-select-label">Mileage</InputLabel>
                                     <Select
-                                        labelId="demo-multiple-name-label"
-                                        id="demo-multiple-name"
-                                        multiple
+                                        labelId="demo-simple-select-label"
+                                        id="demo-simple-select"
                                         value={mileage}
                                         onChange={handleChangeMileage}
                                         input={<OutlinedInput label="Mileage" />}
@@ -420,12 +412,12 @@ export default function DataTable() {
                                             <MenuItem
                                                 key={data.code}
                                                 value={data.mileage}
-                                                style={getStylesMileage(data.mileage, mileage, theme)}
                                             >
                                                 {data.mileage}
                                             </MenuItem>
                                         ))}
                                     </Select>
+
                                 </FormControl>
                             </div>
 
