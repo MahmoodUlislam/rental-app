@@ -10,7 +10,6 @@ import MenuItem from '@mui/material/MenuItem';
 import Modal from '@mui/material/Modal';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import Select from '@mui/material/Select';
-import { useTheme } from '@mui/material/styles';
 import TextField from "@mui/material/TextField";
 import { DataGrid } from '@mui/x-data-grid';
 import * as React from 'react';
@@ -34,12 +33,6 @@ const style = {
 export default function DataTable() {
     // for search by name
     const [searched, setSearched] = React.useState("");
-
-    // for setting all the datas of the filter in an array to be used in the next render component.
-    const [filteredData, setFilteredData] = React.useState([]);
-
-    // for setting the filter value of the item name, which is set from the data array.
-    const rentProfile = datas;
 
     // for setting the datas of table after passing search filter of the search bar
     const columns = [
@@ -103,22 +96,63 @@ export default function DataTable() {
     const handleOpenReturn = () => setOpenReturn(true);
     const handleCloseReturn = () => setOpenReturn(false);
 
+    const [itemPrice, setItemPrice] = React.useState([]);
+    const [mileage, setMileage] = React.useState([]);
 
+    // for setting the default date of the date picker field.
+    const [fromDate, setfromDate] = React.useState(
+        new Date(new Date())
+    );
+    const [toDate, setToDate] = React.useState(
+        new Date(new Date(Date.now() + (3600 * 1000 * 24)))
+    );
+    const handleChangeName = (event) => {
+        const {
+            target: { value },
+        } = event;
+
+        setItemPrice(
+            // On autofill we get a stringified value.
+            typeof value === 'string' ? value.split(',') : value,
+        );
+    };
+    const handleChangeMileage = (event) => {
+        const {
+            target: { value },
+        } = event;
+        setMileage(
+            // On autofill we get a stringified value.
+            typeof value === 'string' ? value.split(',') : value,
+        );
+    };
+    // select option in modal 
+    const ITEM_HEIGHT = 48;
+    const ITEM_PADDING_TOP = 8;
+    const MenuProps = {
+        PaperProps: {
+            style: {
+                maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+                width: 250,
+            },
+        },
+    };
 
     // Child modal displaying for book
     function ChildModalBook(props) {
         const [openBook, setOpenBook] = React.useState(false);
         const handleOpenBook = () => setOpenBook(true);
         const handleCloseBook = () => setOpenBook(false);
+
+
         // for generating the result for Book based on date and price/day.
         const BookSubmitHandler = (e) => {
             e.preventDefault();
-            console.log(toDate, fromDate, props.price);
-            const days = (toDate - fromDate) / (1000 * 3600 * 24);
-            console.log(days)
-            const priceBook = days * props.price;
-            console.log(priceBook)
+            const daysForBooking = Math.ceil((toDate - fromDate) / (1000 * 3600 * 24));
+            const priceBook = daysForBooking * props.itemPrice;
             handleOpenBook();
+
+            //for testing the result of price.
+            console.log(priceBook);
         };
 
         return (
@@ -153,13 +187,24 @@ export default function DataTable() {
         const [openReturn, setOpenReturn] = React.useState(false);
         const handleOpenReturn = () => setOpenReturn(true);
         const handleCloseReturn = () => setOpenReturn(false);
+
+
         // for generating the result return based on date and price/day.
         const ReturnSubmitHandler = (e) => {
             e.preventDefault();
-            const days = (toDate - fromDate) / (1000 * 3600 * 24);
-            const priceReturn = days * props.price;
-            handleOpenReturn();
+            const daysForReturn = Math.ceil((toDate - fromDate) / (1000 * 3600 * 24));
+            const priceReturn = daysForReturn * props.itemPrice;
+            if (props.daysForReturn === undefined) {
+                alert("Please select dates first by booking the item, before returning it.");
+                return;
+            } else {
+                handleOpenReturn();
+            }
+
+            // for testing the result of price.
+            console.log(priceReturn);
         };
+
         return (
             <React.Fragment>
                 <div style={{ textAlign: 'right' }}>
@@ -189,75 +234,6 @@ export default function DataTable() {
             </React.Fragment>
         );
     }
-
-    // select option in modal 
-    const ITEM_HEIGHT = 48;
-    const ITEM_PADDING_TOP = 8;
-    const MenuProps = {
-        PaperProps: {
-            style: {
-                maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-                width: 250,
-            },
-        },
-    };
-
-
-    function getStyles(theme) {
-        return {
-            fontWeight: theme.typography.fontWeightRegular
-        };
-    }
-    function getStylesMileage(name, mileage, theme) {
-        return {
-            fontWeight:
-                mileage.indexOf(name) === -1
-                    ? theme.typography.fontWeightRegular
-                    : theme.typography.fontWeightMedium,
-        };
-    }
-    const theme = useTheme();
-    const [itemName, setItemName] = React.useState([]);
-    const [mileage, setMileage] = React.useState([]);
-
-    const handleChangeName = (event) => {
-        const {
-            target: { value },
-        } = event;
-
-        setItemName(
-            // On autofill we get a stringified value.
-            typeof value === 'string' ? value.split(',') : value,
-        );
-    };
-    const handleChangeMileage = (event) => {
-        const {
-            target: { value },
-        } = event;
-        setMileage(
-            // On autofill we get a stringified value.
-            typeof value === 'string' ? value.split(',') : value,
-        );
-    };
-
-    // for setting the default date of the date picker field.
-    const [fromDate, setfromDate] = React.useState(
-        new Date(new Date())
-    );
-    const [toDate, setToDate] = React.useState(
-        new Date(new Date(Date.now() + (3600 * 1000 * 24)))
-    );
-
-    // for formatting the date to be used in the next render component, to be calculated for pricing.
-    // function formatDate(date) {
-    //     var d = new Date(date),
-    //         day = "" + d.getDate(),
-    //         month = "" + d.getMonth(),
-    //         year = d.getFullYear();
-    // }
-
-
-
 
     return (
         <div style={{ height: 550, width: '100%', marginTop: '20px' }}>
@@ -297,7 +273,7 @@ export default function DataTable() {
                                     <Select
                                         labelId="demo-simple-select-label"
                                         id="demo-simple-select"
-                                        value={itemName}
+                                        value={itemPrice}
                                         label="item name"
                                         onChange={handleChangeName}
                                     >
@@ -305,7 +281,6 @@ export default function DataTable() {
                                             <MenuItem
                                                 key={data.code}
                                                 value={data.price}
-
                                             >
                                                 {data.name}
                                             </MenuItem>
@@ -355,7 +330,7 @@ export default function DataTable() {
 
                             {/* Child modal for book */}
                             <div style={{ textAlign: 'right' }}>
-                                <ChildModalBook handleCloseBook={(e) => handleCloseBook(e.target.value)} />
+                                <ChildModalBook itemPrice={itemPrice} handleCloseBook={(e) => handleCloseBook(e.target.value)} />
                             </div>
                         </Box>
                     </Modal>
@@ -381,7 +356,7 @@ export default function DataTable() {
                                     <Select
                                         labelId="demo-simple-select-label"
                                         id="demo-simple-select"
-                                        value={itemName}
+                                        value={itemPrice}
                                         label="item name"
                                         onChange={handleChangeName}
                                     >
@@ -389,7 +364,6 @@ export default function DataTable() {
                                             <MenuItem
                                                 key={data.code}
                                                 value={data.price}
-
                                             >
                                                 {data.name}
                                             </MenuItem>
