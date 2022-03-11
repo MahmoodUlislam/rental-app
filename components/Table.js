@@ -13,6 +13,7 @@ import Select from '@mui/material/Select';
 import TextField from "@mui/material/TextField";
 import { DataGrid } from '@mui/x-data-grid';
 import * as React from 'react';
+import { ChildModalBook, ChildModalReturn } from './ChildModals';
 let datas = require('../data/Data.json');
 
 // modal styling
@@ -100,7 +101,7 @@ export default function DataTable() {
     const [mileage, setMileage] = React.useState([]);
 
     // for setting the default date of the date picker field.
-    const [fromDate, setfromDate] = React.useState(
+    const [fromDate, setFromDate] = React.useState(
         new Date(new Date())
     );
     const [toDate, setToDate] = React.useState(
@@ -136,104 +137,6 @@ export default function DataTable() {
             },
         },
     };
-
-    // Child modal displaying for book
-    function ChildModalBook(props) {
-        const [openBook, setOpenBook] = React.useState(false);
-        const handleOpenBook = () => setOpenBook(true);
-        const handleCloseBook = () => setOpenBook(false);
-
-
-        // for generating the result for Book based on date and price/day.
-        const BookSubmitHandler = (e) => {
-            e.preventDefault();
-            const daysForBooking = Math.ceil((toDate - fromDate) / (1000 * 3600 * 24));
-            const priceBook = daysForBooking * props.itemPrice;
-            handleOpenBook();
-
-            //for testing the result of price.
-            console.log(priceBook);
-        };
-
-        return (
-            <React.Fragment>
-                <Button onClick={props.handleCloseBook}>No</Button>
-                <Button onClick={BookSubmitHandler}>Yes</Button>
-                <Modal
-                    open={openBook}
-                    onClose={handleCloseBook}
-                    aria-labelledby="child-modal-title"
-                    aria-describedby="child-modal-description"
-                >
-                    <Box sx={{ ...style, width: 400 }}>
-                        <p style={{ textAlign: 'center' }} id="child-modal-description">
-                            Your estimated price is ${props.priceBook}
-                        </p>
-                        <p style={{ textAlign: 'center' }} id="child-modal-description">
-                            Do you want to proceed?
-                        </p>
-
-                        <div style={{ textAlign: 'right' }}>
-                            <Button onClick={handleCloseBook}>Confirm</Button>
-                        </div>
-                    </Box>
-                </Modal>
-            </React.Fragment >
-        );
-    }
-
-    // Child modal displaying for return
-    function ChildModalRetrun(props) {
-        const [openReturn, setOpenReturn] = React.useState(false);
-        const handleOpenReturn = () => setOpenReturn(true);
-        const handleCloseReturn = () => setOpenReturn(false);
-
-
-        // for generating the result return based on date and price/day.
-        const ReturnSubmitHandler = (e) => {
-            e.preventDefault();
-            const daysForReturn = Math.ceil((toDate - fromDate) / (1000 * 3600 * 24));
-            const priceReturn = daysForReturn * props.itemPrice;
-            if (props.daysForReturn === undefined) {
-                alert("Please select dates first by booking the item, before returning it.");
-                return;
-            } else {
-                handleOpenReturn();
-            }
-
-            // for testing the result of price.
-            console.log(priceReturn);
-        };
-
-        return (
-            <React.Fragment>
-                <div style={{ textAlign: 'right' }}>
-                    <Button onClick={props.handleCloseReturn}>No</Button>
-                    <Button onClick={ReturnSubmitHandler}>Yes</Button>
-                </div>
-                <Modal
-                    open={openReturn}
-                    onClose={handleCloseReturn}
-                    aria-labelledby="child-modal-title"
-                    aria-describedby="child-modal-description"
-                >
-                    <Box sx={{ ...style, width: 400 }}>
-                        <p style={{ textAlign: 'center' }} id="child-modal-description">
-                            Your total price is ${props.priceReturn}
-                        </p>
-                        <p style={{ textAlign: 'center' }} id="child-modal-description">
-                            Do you want to proceed?
-                        </p>
-
-                        <div style={{ textAlign: 'right' }}>
-                            <Button onClick={handleCloseReturn}>Confirm</Button>
-                        </div>
-                    </Box>
-                </Modal>
-
-            </React.Fragment>
-        );
-    }
 
     return (
         <div style={{ height: 550, width: '100%', marginTop: '20px' }}>
@@ -301,7 +204,7 @@ export default function DataTable() {
                                                 value={fromDate}
 
                                                 onChange={(newValue) => {
-                                                    setfromDate(newValue);
+                                                    setFromDate(newValue);
                                                 }}
                                                 renderInput={(params) => <TextField {...params} />}
                                             />
@@ -330,7 +233,7 @@ export default function DataTable() {
 
                             {/* Child modal for book */}
                             <div style={{ textAlign: 'right' }}>
-                                <ChildModalBook itemPrice={itemPrice} handleCloseBook={(e) => handleCloseBook(e.target.value)} />
+                                <ChildModalBook toDate={toDate} fromDate={fromDate} itemPrice={itemPrice} handleCloseBook={(e) => handleCloseBook(e.target.value)} />
                             </div>
                         </Box>
                     </Modal>
@@ -396,7 +299,7 @@ export default function DataTable() {
                             </div>
 
                             {/* Child modal for Return */}
-                            <ChildModalRetrun handleCloseReturn={(e) => handleCloseReturn(e.target.value)} />
+                            <ChildModalReturn itemPrice={itemPrice} mileage={mileage} handleCloseReturn={(e) => handleCloseReturn(e.target.value)} />
                         </Box>
                     </Modal>
                 </div>
