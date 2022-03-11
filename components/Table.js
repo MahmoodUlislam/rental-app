@@ -16,7 +16,6 @@ import { DataGrid } from '@mui/x-data-grid';
 import * as React from 'react';
 let datas = require('../data/Data.json');
 
-
 // modal styling
 const style = {
     position: 'absolute',
@@ -114,10 +113,14 @@ export default function DataTable() {
         // for generating the result for Book based on date and price/day.
         const BookSubmitHandler = (e) => {
             e.preventDefault();
+            console.log(toDate, fromDate, props.price);
             const days = (toDate - fromDate) / (1000 * 3600 * 24);
+            console.log(days)
             const priceBook = days * props.price;
+            console.log(priceBook)
             handleOpenBook();
         };
+
         return (
             <React.Fragment>
                 <Button onClick={props.handleCloseBook}>No</Button>
@@ -224,6 +227,7 @@ export default function DataTable() {
         const {
             target: { value },
         } = event;
+        console.log(value);
         setItemName(
             // On autofill we get a stringified value.
             typeof value === 'string' ? value.split(',') : value,
@@ -304,7 +308,7 @@ export default function DataTable() {
                                         {datas.map((data) => (
                                             <MenuItem
                                                 key={data.code}
-                                                value={data.name}
+                                                value={data.price}
                                                 style={getStyles(data.name, itemName, theme)}
                                             >
                                                 {data.name}
@@ -353,6 +357,7 @@ export default function DataTable() {
                                 </div>
                             </div>
 
+                            {/* Child modal for book */}
                             <div style={{ textAlign: 'right' }}>
                                 <ChildModalBook handleCloseBook={(e) => handleCloseBook(e.target.value)} />
                             </div>
@@ -377,6 +382,7 @@ export default function DataTable() {
                             <div>
                                 <FormControl sx={{ m: 1, width: 300 }}>
                                     <InputLabel id="demo-multiple-name-label">Name</InputLabel>
+
                                     <Select
                                         labelId="demo-multiple-name-label"
                                         id="demo-multiple-name"
@@ -423,6 +429,7 @@ export default function DataTable() {
                                 </FormControl>
                             </div>
 
+                            {/* Child modal for Return */}
                             <ChildModalRetrun handleCloseReturn={(e) => handleCloseReturn(e.target.value)} />
                         </Box>
                     </Modal>
