@@ -97,8 +97,8 @@ export default function DataTable() {
     const handleOpenReturn = () => setOpenReturn(true);
     const handleCloseReturn = () => setOpenReturn(false);
 
-    const [itemPrice, setItemPrice] = React.useState([]);
-    const [mileage, setMileage] = React.useState([]);
+    const [itemPrice, setItemPrice] = React.useState();
+    const [mileage, setMileage] = React.useState();
 
     // for setting the default date of the date picker field.
     const [fromDate, setFromDate] = React.useState(
@@ -107,6 +107,7 @@ export default function DataTable() {
     const [toDate, setToDate] = React.useState(
         new Date(new Date(Date.now() + (3600 * 1000 * 24)))
     );
+
     const handleChangeName = (event) => {
         const {
             target: { value },
@@ -126,6 +127,7 @@ export default function DataTable() {
             typeof value === 'string' ? value.split(',') : value,
         );
     };
+
     // select option in modal 
     const ITEM_HEIGHT = 48;
     const ITEM_PADDING_TOP = 8;

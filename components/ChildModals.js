@@ -43,47 +43,35 @@ export function ChildModalBook(props) {
         } else {
             handleOpenBook();
         }
-
         setPriceBook(daysForBooking * props.itemPrice);
     };
 
-    if (props.itemPrice) {
-        return (
-            <React.Fragment>
-                <Button onClick={props.handleCloseBook}>No</Button>
-                <Button onClick={BookSubmitHandler}>Yes</Button>
 
-                <Modal
-                    open={openBook}
-                    onClose={handleCloseBook}
-                    aria-labelledby="child-modal-title"
-                    aria-describedby="child-modal-description"
-                >
-                    <Box sx={{ ...style, width: 400 }}>
-                        <p style={{ textAlign: 'center' }} id="child-modal-description">
-                            Your estimated price is ${priceBook}
-                        </p>
-                        <p style={{ textAlign: 'center' }} id="child-modal-description">
-                            Do you want to proceed?
-                        </p>
+    return (
+        <React.Fragment>
+            <Button onClick={props.handleCloseBook}>No</Button>
+            <Button onClick={BookSubmitHandler}>Yes</Button>
+            <Modal
+                open={openBook}
+                onClose={handleCloseBook}
+                aria-labelledby="child-modal-title"
+                aria-describedby="child-modal-description"
+            >
+                <Box sx={{ ...style, width: 400 }}>
+                    <p style={{ textAlign: 'center' }} id="child-modal-description">
+                        Your estimated price is ${priceBook}
+                    </p>
+                    <p style={{ textAlign: 'center' }} id="child-modal-description">
+                        Do you want to proceed?
+                    </p>
 
-                        <div style={{ textAlign: 'right' }}>
-                            <Button onClick={handleCloseBook}>Confirm</Button>
-                        </div>
-                    </Box>
-                </Modal>
+                    <div style={{ textAlign: 'right' }}>
+                        <Button onClick={handleCloseBook}>Confirm</Button>
+                    </div>
+                </Box>
+            </Modal>
 
-            </React.Fragment >)
-    } else {
-        return (
-            <React.Fragment>
-                <Button onClick={props.handleCloseBook}>No</Button>
-                <Button onClick={BookSubmitHandler}>Yes</Button>
-
-            </React.Fragment >
-        );
-    }
-
+        </React.Fragment >)
 }
 
 // Child modal displaying for return
